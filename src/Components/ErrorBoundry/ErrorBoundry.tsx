@@ -1,14 +1,25 @@
 import React, { Component } from "react";
 
-export class ErrorBoundry extends Component {
-  constructor(props) {
+type ErrorBoundryProps = {
+  children: React.ReactNode;
+};
+
+type ErrorBoundryState = {
+  hasError: boolean;
+};
+
+export class ErrorBoundry extends Component<
+  ErrorBoundryProps,
+  ErrorBoundryState
+> {
+  constructor(props: ErrorBoundryProps) {
     super(props);
     this.state = {
       hasError: false,
     };
   }
 
-  componentDidCatch(error, info) {
+  componentDidCatch() {
     this.setState({ hasError: true });
   }
 

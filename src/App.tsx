@@ -1,13 +1,25 @@
-import React, { Component } from "react";
+import { Component, ChangeEvent } from "react";
 import CardList from "./Components/CardList/CardList";
 import SearchBox from "./Components/SearchBox/SearchBox";
 import "./App.css";
 import Scroll from "./Components/Scroll/Scroll";
 import ErrorBoundry from "./Components/ErrorBoundry/ErrorBoundry";
+import { getData } from "./Utils/fetchUtils";
 
-export class App extends Component {
-  constructor() {
-    super();
+type State = {
+  robots: any[];
+  searchField: string;
+};
+
+export type Robot = {
+  id: string;
+  name: string;
+  email: string;
+};
+
+export class App extends Component<{}, State> {
+  constructor(props: {}) {
+    super(props);
     this.state = {
       robots: [],
       searchField: "",
@@ -15,12 +27,21 @@ export class App extends Component {
   }
 
   componentDidMount() {
-    fetch("https://jsonplaceholder.typicode.com/users")
-      .then((response) => response.json())
-      .then((users) => this.setState({ robots: users }));
+    const fetchData = async () => {
+      try {
+        const users = await getData<Robot[]>(
+          "https://jsonplaceholder.typicode.com/users"
+        );
+        this.setState({ robots: users });
+      } catch (error) {
+        console.error("Data fetching Error: " + error);
+      }
+    };
+
+    fetchData();
   }
 
-  onSearchChange = (event) => {
+  onSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     this.setState({ searchField: event.target.value });
   };
 
